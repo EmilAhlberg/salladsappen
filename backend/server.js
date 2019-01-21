@@ -1,49 +1,69 @@
-require('dotenv').load();
-const express = require('express');
-const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
-const config = require('./config/database');
-const mongoose = require('mongoose');
+require("dotenv").load();
+const express = require("express");
+const bodyParser = require("body-parser");
+const expressValidator = require("express-validator");
+const config = require("./config/database");
+const mongoose = require("mongoose");
 const port = process.env.PORT || 8550;
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-mongoose.connect(config.database,{ useNewUrlParser: true });
+mongoose.connect(
+  config.database,
+  { useNewUrlParser: true }
+);
 let db = mongoose.connection;
 
 // Check connection
-db.once('open', () => {
-  console.log('Connected to MongoDB!');
+db.once("open", () => {
+  console.log("Connected to MongoDB!");
 });
 
 // Check for DB errors
-db.on('error', (err) => {
+db.on("error", err => {
   console.log(err);
 });
 
-app.use(expressValidator({
-  errorFormatter: function(param, msg, value) {
-      var namespace = param.split('.')
-      , root = namespace.shift()
-      , formParam = root;
+app.use(
+  expressValidator({
+    errorFormatter: function(param, msg, value) {
+      var namespace = param.split("."),
+        root = namespace.shift(),
+        formParam = root;
 
-    while(namespace.length) {
-      formParam += '[' + namespace.shift() + ']';
+      while (namespace.length) {
+        formParam += "[" + namespace.shift() + "]";
+      }
+      return {
+        param: formParam,
+        msg: msg,
+        value: value
+      };
     }
-    return {
-      param : formParam,
-      msg   : msg,
-      value : value
-    };
-  }
-}));
+  })
+);
 
 // Route Files
-const posts = require('./routes/posts');
-app.use('/posts', posts);
+const posts = require("./routes/posts");
+app.use("/posts", posts);
 
-app.listen(port, function(){
-  console.log('Server started!');
-})
+app.get("/backend_get", (req, res) => {
+  res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });
+});
+
+app.post("/backend_insert_one", (req, res) => {
+  console.log(req.body.username, req.body.password);
+
+  db.collection("user").insertOne({
+    username: req.username,
+    password: req.password
+  });
+  res.send({ status: "inserted" });
+});
+
+app.listen(port, () => {
+  console.log("Server started!");
+});
