@@ -51,6 +51,7 @@ const posts = require("./routes/posts");
 app.use("/posts", posts);
 
 app.get("/backend_get", (req, res) => {
+<<<<<<< HEAD
   res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });
 });
 
@@ -62,6 +63,17 @@ app.post("/backend_insert_one", (req, res) => {
     password: req.password
   });
   res.send({ status: "inserted" });
+=======
+  console.log("connected!");
+  let cursor = db.collection("user").find();
+
+  cursor.forEach(doc => {
+    console.log(doc);
+  });
+
+  db.collection("user").insertOne({ username: "emil" });
+  res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });
+>>>>>>> ff40a046a8eaf6fd8c69d157078d8e135ce1e517
 });
 
 app.listen(port, () => {

@@ -37,6 +37,7 @@ class HomeScreen extends React.Component {
           title="Press Me"
           style={styles.temp}
         />
+
         <View style={styles.formContainer}>
           <LoginForm navigate={navigate} />
         </View>
@@ -55,7 +56,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 20
   },
-
   formContainer: {
     alignItems: "center",
     flexGrow: 1,

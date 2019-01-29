@@ -7,6 +7,7 @@ import {
   StyleSheet
 } from "react-native";
 import React, { Component } from "react";
+
 import { connect } from "react-redux";
 import { loginAction } from "./actions/NetworkAction.js";
 import { bindActionCreators } from "redux";
@@ -18,6 +19,7 @@ class LoginForm extends Component {
     super(props);
     this.state = { username: "", password: "" };
   }
+
   render() {
     return (
       <View styles={styles.container}>
@@ -37,7 +39,9 @@ class LoginForm extends Component {
           style={styles.input}
           returnKeyType="go"
           onChangeText={input => this.setState({ password: input })}
-          ref={input => {}}
+          ref={input => {
+            this.passwordInput = input;
+          }}
           placeholder="Password"
           placeholderTextColor="rgba(225,225,225,0.7)"
           secureTextEntry
