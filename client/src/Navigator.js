@@ -6,7 +6,7 @@ import OtherScreen from "./OtherScreen";
 const rootNavigator = createStackNavigator(
   {
     Home: StartScreen,
-    Profile: OtherScreen
+    Other: OtherScreen
   },
   { initialRouteName: "Home" }
 );

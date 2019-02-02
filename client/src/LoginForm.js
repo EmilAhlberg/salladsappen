@@ -9,7 +9,7 @@ import {
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { loginAction } from "./actions/NetworkAction.js";
+import { loginAction, registerAction } from "./actions/NetworkAction.js";
 import { bindActionCreators } from "redux";
 
 let userName = "";
@@ -50,10 +50,16 @@ class LoginForm extends Component {
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => {
-            this.props.actions.loginAction(
-              this.state.username,
-              this.state.password
-            );
+            console.log("action");
+            this.props.actions
+              .loginAction(this.state.username, this.state.password)
+              .then(() => {
+                console.log(this.props.userAuthenticated);
+                if (this.props.userAuthenticated) {
+                  console.log("hej");
+                  this.props.navigate.navigate("Other");
+                }
+              });
           }}
         >
           <Text style={styles.buttonText}>LOGIN</Text>
@@ -62,7 +68,7 @@ class LoginForm extends Component {
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => {
-            this.props.actions.loginAction(
+            this.props.actions.registerAction(
               this.state.username,
               this.state.password
             );
@@ -100,11 +106,17 @@ const styles = StyleSheet.create({
   }
 });
 
+const mapStateToProps = state => {
+  return {
+    userAuthenticated: state.network.userAuthenticated
+  };
+};
+
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ loginAction }, dispatch)
+  actions: bindActionCreators({ loginAction, registerAction }, dispatch)
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(LoginForm);

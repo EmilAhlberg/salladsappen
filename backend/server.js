@@ -13,9 +13,10 @@ app.use(bodyParser.json());
 
 mongoose.connect(
   config.database,
-  { useNewUrlParser: true }
+  { useNewUrlParser: false }
 );
 let db = mongoose.connection;
+db.dropDatabase();
 
 // Check connection
 db.once("open", () => {
@@ -51,29 +52,17 @@ const posts = require("./routes/posts");
 app.use("/posts", posts);
 
 app.get("/backend_get", (req, res) => {
-<<<<<<< HEAD
   res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });
+  //console.log(db.collection("user").find({}));
 });
 
 app.post("/backend_insert_one", (req, res) => {
   console.log(req.body.username, req.body.password);
-
   db.collection("user").insertOne({
     username: req.username,
     password: req.password
   });
   res.send({ status: "inserted" });
-=======
-  console.log("connected!");
-  let cursor = db.collection("user").find();
-
-  cursor.forEach(doc => {
-    console.log(doc);
-  });
-
-  db.collection("user").insertOne({ username: "emil" });
-  res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });
->>>>>>> ff40a046a8eaf6fd8c69d157078d8e135ce1e517
 });
 
 app.listen(port, () => {

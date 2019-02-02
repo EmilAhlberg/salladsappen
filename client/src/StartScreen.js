@@ -14,7 +14,6 @@ import { bindActionCreators } from "redux";
 
 class HomeScreen extends React.Component {
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <KeyboardAvoidingView
         behavior={"padding"}
@@ -32,14 +31,9 @@ class HomeScreen extends React.Component {
           />
           <Text> {this.props.networkData} </Text>
         </View>
-        <Button
-          onPress={() => this.props.actions.networkAction()}
-          title="Press Me"
-          style={styles.temp}
-        />
 
         <View style={styles.formContainer}>
-          <LoginForm navigate={navigate} />
+          <LoginForm navigate={this.props.navigation} />
         </View>
       </KeyboardAvoidingView>
     );
@@ -51,10 +45,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     justifyContent: "flex-end"
-  },
-  temp: {
-    width: 100,
-    height: 20
   },
   formContainer: {
     alignItems: "center",

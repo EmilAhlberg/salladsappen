@@ -4,17 +4,21 @@ const router = express.Router();
 let Post = require("../models/post");
 
 router.post("/new", function(req, res) {
-  req.assert("author", "Post author must be set").notEmpty();
-  req.assert("content", "Post must have content").notEmpty();
+  console.log(req.body);
+  console.log(req.body.username);
 
+  req.assert("username", "Post username must be set").notEmpty();
+  req.assert("password", "Post password must have content").notEmpty();
+
+  console.log("FINALLY!");
   let errors = req.validationErrors();
 
   if (errors) {
     console.log(errors);
   } else {
     let post = new Post();
-    post.author = req.body.author;
-    post.content = req.body.content;
+    post.username = req.body.username;
+    post.password = req.body.password;
 
     post.save(function(err) {
       if (err) {
@@ -27,12 +31,31 @@ router.post("/new", function(req, res) {
 });
 
 router.get("/", function(req, res) {
+  console.log("/");
   Post.find({}, function(err, posts) {
     if (err) {
       console.log(err);
     } else {
       // Send all posts.
-      res.json({ posts: posts });
+      console.log(JSON.stringify(posts));
+      res.set("Content-Type", "application/json");
+      res.send({ body: { posts: posts } });
+    }
+  });
+});
+
+router.post("/findUser", function(req, res) {
+  console.log("/findUser");
+  console.log("log in as:!", req.body.username);
+  Post.find({ username: req.body.username }, function(err, posts) {
+    if (err) {
+      console.log(err);
+    } else {
+      // 1 means success atm, 0 fail
+      let answer = posts.length > 0 ? 1 : 0;
+      console.log("Match status code: ", answer);
+      res.set("Content-Type", "application/json");
+      res.send({ body: { status: answer } });
     }
   });
 });
