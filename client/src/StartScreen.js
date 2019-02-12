@@ -1,4 +1,5 @@
 import React from "react";
+import LOGO from "./logo.png";
 import {
   Button,
   StyleSheet,
@@ -21,15 +22,7 @@ class HomeScreen extends React.Component {
         style={styles.container}
       >
         <View style={styles.loginContainer}>
-          <Image
-            resizeMode="contain"
-            style={styles.logo}
-            source={{
-              uri:
-                "https://www.grontogott.se/assets/grontochgottsplash2/img/logo.png"
-            }}
-          />
-          <Text> {this.props.networkData} </Text>
+          <Image resizeMode="contain" style={styles.logo} source={LOGO} />
         </View>
 
         <View style={styles.formContainer}>
@@ -63,16 +56,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
-  return {
-    networkData: state.network.networkData
-  };
-};
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators({ networkAction }, dispatch)
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(HomeScreen);

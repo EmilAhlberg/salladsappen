@@ -5,6 +5,7 @@ const expressValidator = require("express-validator");
 const config = require("./config/database");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 8550;
+const apiConstants = require("../client/./apiConstants.js");
 
 const app = express();
 
@@ -49,7 +50,9 @@ app.use(
 
 // Route Files
 const posts = require("./routes/posts");
-app.use("/posts", posts);
+app.use(apiConstants.API_POSTS, posts);
+const orders = require("./routes/orders");
+app.use(apiConstants.API_ORDERS, orders);
 
 app.get("/backend_get", (req, res) => {
   res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });

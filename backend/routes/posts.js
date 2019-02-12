@@ -1,18 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const apiConstants = require("../../client/./apiConstants.js");
 
-let Post = require("../models/post");
+let Post = require("../models/post.js");
 
-router.post("/new", function(req, res) {
-  console.log(req.body);
-  console.log(req.body.username);
-
+router.post(apiConstants.REGISTER_USER, function(req, res) {
+  console.log(req.body.username, req.body.password);
   req.assert("username", "Post username must be set").notEmpty();
   req.assert("password", "Post password must have content").notEmpty();
-
-  console.log("FINALLY!");
   let errors = req.validationErrors();
-
   if (errors) {
     console.log(errors);
   } else {
@@ -44,9 +40,8 @@ router.get("/", function(req, res) {
   });
 });
 
-router.post("/findUser", function(req, res) {
-  console.log("/findUser");
-  console.log("log in as:!", req.body.username);
+router.post(apiConstants.MATCH_USER, function(req, res) {
+  console.log("log in as:", req.body.username);
   Post.find({ username: req.body.username }, function(err, posts) {
     if (err) {
       console.log(err);

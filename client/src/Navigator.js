@@ -1,14 +1,20 @@
 import { createAppContainer, createStackNavigator } from "react-navigation";
 
 import StartScreen from "./StartScreen";
-import OtherScreen from "./OtherScreen";
+import OrderScreen from "./order/OrderScreen";
+import SplashScreen from "./SplashScreen.js";
 
 const rootNavigator = createStackNavigator(
   {
     Home: StartScreen,
-    Other: OtherScreen
+    Splash: SplashScreen,
+    Order: OrderScreen
   },
-  { initialRouteName: "Home" }
+  {
+    initialRouteName: "Order",
+    headerMode: "SplashScreen",
+    headerLeft: null
+  }
 );
 
 const Navigator = createAppContainer(rootNavigator);

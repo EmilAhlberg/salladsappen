@@ -56,13 +56,12 @@ class LoginForm extends Component {
               .then(() => {
                 console.log(this.props.userAuthenticated);
                 if (this.props.userAuthenticated) {
-                  console.log("hej");
-                  this.props.navigate.navigate("Other");
+                  this.props.navigate.navigate("Order");
                 }
               });
           }}
         >
-          <Text style={styles.buttonText}>LOGIN</Text>
+          <Text style={styles.buttonText}>LOGIN (cheat enabled)</Text>
         </TouchableOpacity>
         <Text style={styles.buttonText}>or</Text>
         <TouchableOpacity
