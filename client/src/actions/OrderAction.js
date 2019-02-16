@@ -1,8 +1,9 @@
 import {
   MAIN_SELECTION,
+  CUSTOM_ORDER_BACK,
   SELECT_CARBOHYDRATE,
   SELECT_CONDIMENTS,
-  SELCECT_DRESSING,
+  SELECT_DRESSING,
   SELECT_PROTEIN
 } from ".././ReduxActionStrings.js";
 
@@ -10,18 +11,25 @@ export const optionSelection = selection => dispatch => {
   dispatch({ type: MAIN_SELECTION, payload: selection });
 };
 
-export const carbohydrateSelection = selection => dispatch => {
-  dispatch({ type: SELECT_CARBOHYDRATE, payload: selection });
+export const handleSelection = (selectionIndex, selectionData) => dispatch => {
+  let action = "";
+  switch (selectionIndex) {
+    case 0:
+      action = SELECT_CARBOHYDRATE;
+      break;
+    case 1:
+      action = SELECT_PROTEIN;
+      break;
+    case 2:
+      action = SELECT_CONDIMENTS;
+      break;
+    case 3:
+      action = SELECT_DRESSING;
+      break;
+  }
+  dispatch({ type: action, payload: selectionData });
 };
 
-export const proteinSelection = selection => dispatch => {
-  dispatch({ type: SELECT_PROTEIN, payload: selection });
-};
-
-export const condimentSelection = selection => dispatch => {
-  dispatch({ type: SELECT_CONDIMENTS, payload: selection });
-};
-
-export const dressingSelection = selection => dispatch => {
-  dispatch({ type: SELECT_DRESSING, payload: selection });
+export const handleCustomOrderBack = () => dispatch => {
+  dispatch({ type: CUSTOM_ORDER_BACK });
 };

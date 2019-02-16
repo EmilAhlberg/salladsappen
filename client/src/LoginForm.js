@@ -12,8 +12,6 @@ import { connect } from "react-redux";
 import { loginAction, registerAction } from "./actions/NetworkAction.js";
 import { bindActionCreators } from "redux";
 
-let userName = "";
-let password = "";
 class LoginForm extends Component {
   constructor(props) {
     super(props);

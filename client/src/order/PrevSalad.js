@@ -14,7 +14,7 @@ import { optionSelection } from "../actions/OrderAction.js";
 
 class PrevSalad extends React.Component {
   render() {
-    return <Text> MENU </Text>;
+    return <Text> PREV </Text>;
   }
 }
 

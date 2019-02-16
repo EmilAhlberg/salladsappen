@@ -1,6 +1,8 @@
 import React from "react";
 import LOGO from "./logo.png";
 import {
+  Alert,
+  BackHandler,
   Button,
   StyleSheet,
   Text,
@@ -12,8 +14,35 @@ import { connect } from "react-redux";
 import LoginForm from "./LoginForm.js";
 import { networkAction } from "./actions/NetworkAction.js";
 import { bindActionCreators } from "redux";
+import {
+  exitAlert,
+  handleAndroidBackButton,
+  removeAndroidBackButtonHandler
+} from "./BackHandler.js";
 
 class HomeScreen extends React.Component {
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
+      Alert.alert("Confirm exit", "Do you want to quit the app?", [
+        {
+          text: "CANCEL",
+          onPress: () => {}
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            BackHandler.exitApp();
+          }
+        }
+      ]);
+      return true;
+    });
+  }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
   render() {
     return (
       <KeyboardAvoidingView

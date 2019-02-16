@@ -1,17 +1,17 @@
 import { createAppContainer, createStackNavigator } from "react-navigation";
 
 import StartScreen from "./StartScreen";
-import OrderScreen from "./order/OrderScreen";
+import MainScreen from "./order/MainScreen";
 import SplashScreen from "./SplashScreen.js";
 
 const rootNavigator = createStackNavigator(
   {
     Home: StartScreen,
     Splash: SplashScreen,
-    Order: OrderScreen
+    Order: MainScreen
   },
   {
-    initialRouteName: "Order",
+    initialRouteName: "Home",
     headerMode: "SplashScreen",
     headerLeft: null
   }
