@@ -2,12 +2,16 @@ import {
   FETCH_ACTION_FAIL,
   FETCH_ACTION_SUCCESS,
   LOGIN_FAIL,
-  LOGIN_SUCCESS
+  LOGIN_SUCCESS,
+  SENDING_ORDER,
+  UPDATE_MENU
 } from ".././ReduxActionStrings.js";
 import {
   API_DEFAULT_LOCATION,
   API_ORDERS,
   API_POSTS,
+  API_MENUITEMS,
+  FETCH_MENU,
   MATCH_USER,
   PLACE_ORDER,
   REGISTER_USER
@@ -19,6 +23,15 @@ export const networkAction = () => dispatch => {
     .then(
       json => dispatch({ type: FETCH_ACTION_SUCCESS, payload: json.express }),
       err => dispatch({ type: FETCH_ACTION_FAIL, payload: err })
+    );
+};
+
+export const fetchMenuInfo = () => dispatch => {
+  fetch(API_DEFAULT_LOCATION + API_MENUITEMS + FETCH_MENU)
+    .then(response => response.json())
+    .then(
+      json => dispatch({ type: UPDATE_MENU, payload: json.body.menuItems }),
+      err => console.log(err)
     );
 };
 
@@ -93,4 +106,45 @@ export const orderAction = orderInfo => dispatch => {
   }).then(response => {
     if (response.status == 200) console.log("alright!");
   });
+};
+
+export const sendOrder = selection => dispatch => {
+  dispatch({ type: SENDING_ORDER, payload: order });
+  let order = selection
+    .map(orderedCategory => {
+      return orderedCategory.reduce((a, b) => {
+        //intra-category separator
+        return a + "+" + b;
+      });
+    })
+    .reduce((a, b) => {
+      //category separator
+      return a + "|" + b;
+    });
+
+  fetch(API_DEFAULT_LOCATION + API_ORDERS + PLACE_ORDER, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      carbohydrate: selection[0][0],
+      protein: selection[1][0],
+      condiment1: selection[2][0],
+      condiment2: selection[2][1],
+      condiment3: selection[2][2],
+      condiment4: selection[2][3],
+      dressing: selection[3][0]
+    })
+  })
+    .then(response => {
+      if (response.status == 200) console.log("registered!");
+      else {
+        console.log(FAIL, response);
+      }
+    })
+    .catch(err => {
+      console.log("failed order", err);
+    });
 };

@@ -9,7 +9,7 @@ import {
   Easing,
   Dimensions
 } from "react-native";
-import LOGO from "./logo.png";
+import LOGO from "../salladsman7.png";
 
 const { width, height } = Dimensions.get("window");
 
@@ -61,7 +61,7 @@ export default class AnimatedComponent extends Component {
     return (
       <View style={styles.container}>
         <Animated.Text style={[styles.titleText, scaleTitle]}>
-          SalladsMannen!
+          Sallads-Mannen
         </Animated.Text>
         <Animated.View style={[styles.ring, logoStyle]}>
           <Animated.Image
@@ -81,7 +81,7 @@ export default class AnimatedComponent extends Component {
               marginTop: "15%",
               width: width * 0.75,
               height: 4,
-              backgroundColor: "#fff",
+              backgroundColor: "#14ffff",
               borderRadius: 2
             },
             scaleText
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   ring: {
-    backgroundColor: "#40C4FF",
+    backgroundColor: "#14ff33",
     borderRadius: 150,
     borderWidth: 2,
     borderColor: "#FFF",

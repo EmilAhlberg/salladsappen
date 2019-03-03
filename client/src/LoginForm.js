@@ -48,11 +48,9 @@ class LoginForm extends Component {
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => {
-            console.log("action");
             this.props.actions
               .loginAction(this.state.username, this.state.password)
               .then(() => {
-                console.log(this.props.userAuthenticated);
                 if (this.props.userAuthenticated) {
                   this.props.navigate.navigate("Order");
                 }

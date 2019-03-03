@@ -8,15 +8,14 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { Header } from "react-native-elements";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CustomSalad from "./CustomSalad.js";
 import MenuSalad from "./MenuSalad.js";
 import PrevSalad from "./PrevSalad.js";
-import { optionSelection } from "../actions/OrderAction.js";
-import GestureRecognizer, {
-  swipeDirections
-} from "react-native-swipe-gestures";
+import { fetchMenuInfo } from "../actions/NetworkAction.js";
+import { optionSelection, resetOrder } from "../actions/OrderAction.js";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 const MAIN_OPTIONS = [
@@ -26,19 +25,20 @@ const MAIN_OPTIONS = [
 ];
 
 class MainScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { myText: "default" };
+  //fetch item lists
+  componentDidMount() {
+    console.log("fetchlist");
+    this.props.actions.fetchMenuInfo();
   }
 
   optionSelection = () => {
-    console.log("yes");
     return (
       <View style={styles.optionContainer}>
         <Text>Welcome {this.props.username}!</Text>
         {MAIN_OPTIONS.map(({ optionText }, i) => {
           return (
             <TouchableOpacity
+              key={optionText}
               style={styles.buttonContainer}
               onPress={() => {
                 console.log(i);
@@ -54,69 +54,27 @@ class MainScreen extends React.Component {
   };
 
   onPageChange(position) {
+    //TODO: method stub is dead
     this.setState({ currentPosition: position });
   }
 
   render() {
-    const config = {
-      velocityThreshold: 0.3,
-      directionalOffsetThreshold: 80
-    };
     return (
-      <GestureRecognizer
-        onSwipe={(direction, state) => this.onSwipe(direction, state)}
-        onSwipeUp={state => this.onSwipeUp(state)}
-        onSwipeDown={state => this.onSwipeDown(state)}
-        onSwipeLeft={state => this.onSwipeLeft(state)}
-        onSwipeRight={state => this.onSwipeRight(state)}
-        config={config}
-        style={styles.container}
-      >
+      <View style={styles.container}>
+        <Header
+          leftComponent={{ icon: "menu", color: "#fff" }}
+          centerComponent={{ text: "SalladsMannen", style: { color: "#fff" } }}
+          rightComponent={{
+            icon: "home",
+            color: "#fff",
+            onPress: () => {
+              this.props.actions.resetOrder();
+            }
+          }}
+        />
         {this.options[this.props.optionSelection]}
-
-        <Text>{this.state.myText}</Text>
-      </GestureRecognizer>
+      </View>
     );
-  }
-  /*<View style={styles.rlButtonContainer}>
-    <Button icon={<Icon name="arrow-left" size={30} color="white" />} />
-    <Button icon={<Icon name="arrow-right" size={30} color="white" />} />
-  </View>*/
-
-  onSwipeUp(gestureState) {
-    console.log("yes");
-    this.setState({ myText: "You swiped up!" });
-  }
-
-  onSwipeDown(gestureState) {
-    this.setState({ myText: "You swiped down!" });
-  }
-
-  onSwipeLeft(gestureState) {
-    this.setState({ myText: "You swiped left!" });
-  }
-
-  onSwipeRight(gestureState) {
-    this.setState({ myText: "You swiped right!" });
-  }
-
-  onSwipe(gestureName, gestureState) {
-    const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
-    this.setState({ gestureName: gestureName });
-    switch (gestureName) {
-      case SWIPE_UP:
-        this.setState({ backgroundColor: "red" });
-        break;
-      case SWIPE_DOWN:
-        this.setState({ backgroundColor: "green" });
-        break;
-      case SWIPE_LEFT:
-        this.setState({ backgroundColor: "blue" });
-        break;
-      case SWIPE_RIGHT:
-        this.setState({ backgroundColor: "yellow" });
-        break;
-    }
   }
 
   // Enum conditional rendering
@@ -135,13 +93,17 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F00000",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center"
   },
   optionContainer: {
-    flex: 1,
-    backgroundColor: "#F0F000",
+    display: "flex",
+    height: "88%",
+    width: "100%",
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center"
   },
@@ -169,13 +131,15 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   return {
     username: state.network.username,
-    optionSelection: state.order.optionSelection,
-    customIndex: state.order.customIndex
+    optionSelection: state.order.optionSelection
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  actions: bindActionCreators({ optionSelection }, dispatch)
+  actions: bindActionCreators(
+    { fetchMenuInfo, optionSelection, resetOrder },
+    dispatch
+  )
 });
 
 export default connect(

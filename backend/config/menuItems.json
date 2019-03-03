@@ -1,0 +1,87 @@
+[
+  {
+    "id": "Kolhydrat1",
+    "category": "CARBOHYDRATE",
+    "name": "Fullkornspasta"
+  },
+  {
+    "id": "Kolhydrat2",
+    "category": "CARBOHYDRATE",
+    "name": "Endast sallad"
+  },
+  {
+    "id": "Kolhydrat4",
+    "category": "CARBOHYDRATE",
+    "name": "Quinoa"
+  },
+  {
+    "id": "Kolhydrat5",
+    "category": "CARBOHYDRATE",
+    "name": "Mathavre"
+  },
+  {
+    "id": "Protein1",
+    "category": "PROTEIN",
+    "name": "Kyckling"
+  },
+  {
+    "id": "Protein2",
+    "category": "PROTEIN",
+    "name": "Kalkon"
+  },
+  {
+    "id": "Protein3",
+    "category": "PROTEIN",
+    "name": "Lax"
+  },
+  {
+    "id": "Protein4",
+    "category": "PROTEIN",
+    "name": "Bönmix"
+  },
+  {
+    "id": "Tillbehör1",
+    "category": "CONDIMENTS",
+    "name": "Tomat"
+  },
+  {
+    "id": "Tillbehör2",
+    "category": "CONDIMENTS",
+    "name": "Rödlök"
+  },
+  {
+    "id": "Tillbehör3",
+    "category": "CONDIMENTS",
+    "name": "Majs"
+  },
+  {
+    "id": "Tillbehör4",
+    "category": "CONDIMENTS",
+    "name": "Krutonger"
+  },
+  {
+    "id": "Tillbehör5",
+    "category": "CONDIMENTS",
+    "name": "Oliver"
+  },
+  {
+    "id": "Tillbehör6",
+    "category": "CONDIMENTS",
+    "name": "Fetaost"
+  },
+  {
+    "id": "Dressing1",
+    "category": "DRESSING",
+    "name": "Caesar"
+  },
+  {
+    "id": "Dressing2",
+    "category": "DRESSING",
+    "name": "Aioli"
+  },
+  {
+    "id": "Dressing3",
+    "category": "DRESSING",
+    "name": "Pesto"
+  }
+]

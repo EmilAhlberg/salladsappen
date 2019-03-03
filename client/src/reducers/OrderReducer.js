@@ -1,10 +1,9 @@
 import {
   CUSTOM_ORDER_BACK,
   MAIN_SELECTION,
-  SELECT_CARBOHYDRATE,
-  SELECT_CONDIMENTS,
-  SELECT_DRESSING,
-  SELECT_PROTEIN
+  RESET_ORDER,
+  UPDATE_CUSTOM_PHASE,
+  UPDATE_MENU
 } from ".././ReduxActionStrings.js";
 
 export const CUSTOM_PHASES = {
@@ -18,44 +17,44 @@ export const CUSTOM_PHASES = {
 const initialState = {
   optionSelection: 0,
   customIndex: CUSTOM_PHASES.CARBOHYDRATE,
-  customCarbohydrate: "",
-  customProtein: "",
-  customCondiments: "",
-  customDressing: ""
+  selectedCarbohydrate: [],
+  selectedProtein: [],
+  selectedCondiments: [],
+  selectedDressing: [],
+  menuItems: [[], [], [], []]
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case CUSTOM_ORDER_BACK:
-      if (state.customIndex > CUSTOM_PHASES.CARBOHYDRATE) {
-        return Object.assign({}, state, { customIndex: state.customIndex - 1 });
+      switch (state.customIndex) {
+        case CUSTOM_PHASES.CARBOHYDRATE:
+          return initialState;
+        default:
+          return Object.assign({}, state, {
+            customIndex: state.customIndex - 1
+          });
       }
-      //reset orderstate if exiting order screen
-      return initialState;
     case MAIN_SELECTION:
       return Object.assign({}, state, { optionSelection: action.payload });
-    case SELECT_CARBOHYDRATE:
-      console.log("reducer:", CUSTOM_PHASES.PROTEIN);
+    case RESET_ORDER:
+      return initialState;
+    case UPDATE_CUSTOM_PHASE:
+      let newDressing = state.selectedDressing.slice();
+      newDressing.push(action.payload);
       return Object.assign({}, state, {
-        customCarbohydrate: action.payload,
-        customIndex: CUSTOM_PHASES.PROTEIN
+        customIndex: state.customIndex + 1
       });
-    case SELECT_PROTEIN:
+    case UPDATE_MENU:
+      let newMenuItems = [[], [], [], []];
+      console.log(action.payload);
+      action.payload.map(item => {
+        let categoryNbr = CUSTOM_PHASES[item.category];
+        newMenuItems[categoryNbr].push({ name: item.name, id: item.id });
+      });
       return Object.assign({}, state, {
-        customProtein: action.payload,
-        customIndex: CUSTOM_PHASES.CONDIMENTS
+        menuItems: newMenuItems
       });
-    case SELECT_CONDIMENTS:
-      return Object.assign({}, state, {
-        customCondiments: action.payload,
-        customIndex: CUSTOM_PHASES.DRESSING
-      });
-    case SELECT_DRESSING:
-      return Object.assign({}, state, {
-        customDressing: action.payload,
-        customIndex: CUSTOM_PHASES.REVIEW
-      });
-
     default:
       return state;
   }

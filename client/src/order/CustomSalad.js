@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  ActivityIndicator,
   BackHandler,
   Dimensions,
   StyleSheet,
@@ -10,56 +11,41 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { CUSTOM_ITEMS } from "./CustomSaladConst.js";
+import { SelectMultipleButton } from "react-native-selectmultiple-button";
 import StepIndicator from "react-native-step-indicator";
-import { handleSelection } from "../actions/OrderAction.js";
-import { handleCustomOrderBack } from "../actions/OrderAction.js";
+import Swiper from "react-native-swiper";
+import { customStyles, styles } from "./CustomSaladStyles.js";
+import { fetchMenuInfo, sendOrder } from "../actions/NetworkAction.js";
 import {
-  handleAndroidBackButton,
-  removeAndroidBackButtonHandler
-} from "../BackHandler.js";
-const PHASE_TITLES = ["Kolhydrat", "Protein", "Tillbehör", "Dressing"];
+  handleCustomOrderBack,
+  updateCustomPhase
+} from "../actions/OrderAction.js";
 
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize: 30,
-  separatorStrokeWidth: 3,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: "#fe7013",
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: "#fe7013",
-  stepStrokeUnFinishedColor: "#aaaaaa",
-  separatorFinishedColor: "#fe7013",
-  separatorUnFinishedColor: "#aaaaaa",
-  stepIndicatorFinishedColor: "#fe7013",
-  stepIndicatorUnFinishedColor: "#ffffff",
-  stepIndicatorCurrentColor: "#ffffff",
-  stepIndicatorLabelFontSize: 12,
-  currentStepIndicatorLabelFontSize: 14,
-  stepIndicatorLabelCurrentColor: "#fe7013",
-  stepIndicatorLabelFinishedColor: "#ffffff",
-  stepIndicatorLabelUnFinishedColor: "#aaaaaa",
-  labelColor: "#999999",
-  labelSize: 10,
-  currentStepLabelColor: "#fe7013"
-};
+const PHASE_TITLES = ["Kolhydrat", "Protein", "Tillbehör", "Dressing"];
 
 // Trailing space fixes UI bug
 const labels = [
-  "Kolhydrat  ",
-  "Protein  ",
-  "Tillbehör  ",
-  "Dressing  ",
-  "Godkänn  "
+  { label: "Kolhydrat  ", limit: 1 },
+  { label: "Protein  ", limit: 1 },
+  { label: "Tillbehör  ", limit: 4 },
+  { label: "Dressing  ", limit: 1 },
+  { label: "Godkänn  ", limit: null }
 ];
 
 class CustomSalad extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      //contains intermediate item selection status
+      selection: [[], [], [], []]
+    };
+  }
+
   componentDidMount() {
+    this.props.actions.fetchMenuInfo();
     this.backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-      console.log("backhandling!");
       this.props.actions.handleCustomOrderBack();
       return true;
-      handleAndroidBackButton();
     });
   }
 
@@ -70,100 +56,133 @@ class CustomSalad extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text> Välj {PHASE_TITLES[this.props.customIndex]}:</Text>
-        {this.props.customIndex !== 4
-          ? this.customSelection(CUSTOM_ITEMS[this.props.customIndex])
-          : this.reviewOrder()}
-        <View style={styles.stepIndicator}>
-          <StepIndicator
-            customStyles={customStyles}
-            currentPosition={this.props.customIndex}
-            stepCount={5}
-            labels={labels}
-          />
-        </View>
+        <Swiper
+          style={styles.wrapper}
+          showsButtons
+          loop={false}
+          onIndexChanged={index => {
+            console.log(index, this.props.customIndex);
+            index <= this.props.customIndex
+              ? this.props.actions.handleCustomOrderBack
+              : this.props.actions.updateCustomPhase(index - 1);
+          }}
+        >
+          {labels.map(({ label }, i) => {
+            return this.renderSwiperContent(label, i);
+          })}
+        </Swiper>
+        <StepIndicator
+          customStyles={customStyles}
+          currentPosition={this.props.customIndex}
+          labels={labels.map(({ label }) => {
+            console.log(label);
+            return label;
+          })}
+        />
       </View>
     );
   }
 
-  customSelection(itemList) {
-    return itemList.map(({ type }, i) => {
+  renderSwiperContent = (label, i) => {
+    return (
+      <View key={label} style={styles.slide1}>
+        <View style={styles.labelContainer}>
+          <Text style={styles.text}>{label}</Text>
+        </View>
+        <View style={styles.content}>
+          {i != 4 ? this.renderSelection(i) : this.reviewOrder()}
+        </View>
+      </View>
+    );
+  };
+
+  renderSelection = i => {
+    return this.props.menuItems[i].map(({ name }) => {
       return (
-        <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => {
-            this.props.actions.handleSelection(this.props.customIndex, type);
+        <SelectMultipleButton
+          key={name + i}
+          buttonViewStyle={{
+            borderRadius: 10,
+            height: 40
           }}
-        >
-          <Text style={styles.buttonText}> {type}</Text>
-        </TouchableOpacity>
+          textStyle={{
+            fontSize: 15
+          }}
+          highLightStyle={{
+            borderColor: "gray",
+            backgroundColor: "transparent",
+            textColor: "gray",
+            borderTintColor: "#007AFF",
+            backgroundTintColor: "#007AFF",
+            textTintColor: "white"
+          }}
+          multiple={false}
+          value={name}
+          selected={this.state.selection[i].includes(name)}
+          singleTap={valueTap => this.singleTap(name, i)}
+        />
       );
+      //return <Text style={styles.text}>{name}</Text>;
     });
+  };
+
+  //TODO: nested  slicing, refactor?
+  singleTap(name, i) {
+    let shallowCopy = this.state.selection.slice();
+    let deepCopy = this.state.selection[i].slice();
+    if (this.state.selection[i].includes(name)) {
+      deepCopy = deepCopy.filter(element => element !== name);
+    } else if (labels[i].limit > this.state.selection[i].length) {
+      deepCopy.push(name);
+    }
+    shallowCopy[i] = deepCopy;
+    console.log(this.state.selection);
+    this.setState({ selection: shallowCopy });
   }
 
   reviewOrder() {
     return (
-      <Text>
-        {this.props.carbohydrate +
-          " " +
-          this.props.protein +
-          " " +
-          this.props.condiments +
-          " " +
-          this.props.dressing}
-      </Text>
+      <View style={styles.reviewContent}>
+        {this.state.selection.map(orderCategory => {
+          return orderCategory.map(orderedItem => {
+            return <Text key={orderedItem + orderCategory}>{orderedItem}</Text>;
+          });
+        })}
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          opacity={this.props.sendingOrder ? 1 : 0}
+        />
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() =>
+            this.props.sendingOrder
+              ? console.log("sending alrdy")
+              : this.props.actions.sendOrder(this.state.selection)
+          }
+        >
+          <Text style={styles.buttonText}> Beställ</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    width: "100%",
-    height: "90%",
-    backgroundColor: "#F00000",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  textField: {
-    backgroundColor: "#FEFFF6",
-    width: Dimensions.get("window").width * 0.7,
-    height: Dimensions.get("window").height * 0.06,
-    textAlign: "center",
-    paddingVertical: 15,
-    justifyContent: "center"
-  },
-  buttonContainer: {
-    marginTop: Dimensions.get("window").height * 0.02,
-    height: Dimensions.get("window").height * 0.08,
-    width: Dimensions.get("window").width * 0.65,
-    backgroundColor: "#2980b6",
-    paddingVertical: 15
-  },
-  buttonText: {
-    textAlign: "center",
-    justifyContent: "center" //etc
-  },
-  stepIndicator: {
-    width: "100%",
-    backgroundColor: "white",
-    marginTop: "auto"
-  }
-});
-
 const mapStateToProps = state => {
   return {
     customIndex: state.order.customIndex,
+    menuItems: state.order.menuItems,
     carbohydrate: state.order.customCarbohydrate,
     protein: state.order.customProtein,
     condiments: state.order.customCondiments,
-    dressing: state.order.customDressing
+    dressing: state.order.customDressing,
+    sendingOrder: state.network.sendingOrder
   };
 };
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(
-    { handleSelection, handleCustomOrderBack },
+    { fetchMenuInfo, updateCustomPhase, handleCustomOrderBack, sendOrder },
     dispatch
   )
 });

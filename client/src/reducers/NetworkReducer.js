@@ -2,10 +2,15 @@ import {
   FETCH_ACTION_FAIL,
   FETCH_ACTION_SUCCESS,
   LOGIN_FAIL,
-  LOGIN_SUCCESS
+  LOGIN_SUCCESS,
+  SENDING_ORDER
 } from ".././ReduxActionStrings.js";
 
-const initialState = { username: "default", userAuthenticated: false };
+const initialState = {
+  sendingOrder: false,
+  username: "default",
+  userAuthenticated: false
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -23,6 +28,8 @@ export default (state = initialState, action) => {
         userAuthenticated: true,
         username: action.payload
       });
+    case SENDING_ORDER:
+      return Object.assign({}, state, { sendingOrder: true });
     default:
       return state;
   }

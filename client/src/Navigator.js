@@ -11,7 +11,7 @@ const rootNavigator = createStackNavigator(
     Order: MainScreen
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Order",
     headerMode: "SplashScreen",
     headerLeft: null
   }

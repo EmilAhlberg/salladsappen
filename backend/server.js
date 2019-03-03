@@ -17,7 +17,10 @@ mongoose.connect(
   { useNewUrlParser: false }
 );
 let db = mongoose.connection;
+//reset database for dev purposes
 db.dropDatabase();
+//insert menuItems into empty database
+require("./routes/menuItems.js").insertMenuItems;
 
 // Check connection
 db.once("open", () => {
@@ -53,6 +56,8 @@ const posts = require("./routes/posts");
 app.use(apiConstants.API_POSTS, posts);
 const orders = require("./routes/orders");
 app.use(apiConstants.API_ORDERS, orders);
+const menuItems = require("./routes/menuItems");
+app.use(apiConstants.API_MENUITEMS, menuItems.router);
 
 app.get("/backend_get", (req, res) => {
   res.send({ express: "YOUR SALLADS-BACKEND IS CONNECTED TO REACT" });

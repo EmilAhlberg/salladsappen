@@ -1,5 +1,5 @@
 import React from "react";
-import LOGO from "./logo.png";
+import LOGO from "../salladslogo.png";
 import {
   Alert,
   BackHandler,
@@ -14,11 +14,6 @@ import { connect } from "react-redux";
 import LoginForm from "./LoginForm.js";
 import { networkAction } from "./actions/NetworkAction.js";
 import { bindActionCreators } from "redux";
-import {
-  exitAlert,
-  handleAndroidBackButton,
-  removeAndroidBackButtonHandler
-} from "./BackHandler.js";
 
 class HomeScreen extends React.Component {
   componentDidMount() {
@@ -66,7 +61,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "flex-end"
+    justifyContent: "center",
+    alignItems: "center"
   },
   formContainer: {
     alignItems: "center",
@@ -74,14 +70,21 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   loginContainer: {
+    marginTop: 120,
+    width: 260,
+    height: 260,
+    justifyContent: "center",
     alignItems: "center",
-    flex: 1,
-    justifyContent: "center"
+    backgroundColor: "#14ff33",
+    borderRadius: 500,
+    borderWidth: 2,
+    borderColor: "#FFF",
+    padding: 7
   },
   logo: {
-    marginTop: 100,
-    width: 300,
-    height: 300
+    resizeMode: "contain",
+    width: 200,
+    height: 200
   }
 });
 
